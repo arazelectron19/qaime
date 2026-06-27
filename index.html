@@ -9,34 +9,38 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700&display=swap');
+       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+
+    /* Çap nizamlamaları */
+    @media print {
+        @page {
+            margin: 10mm; /* Vərəqin kənarlarını tənzimləyir */
+            size: auto;
+        }
         body {
-            font-family: 'Inter', sans-serif;
+            background-color: white !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            -webkit-print-color-adjust: exact; /* Rənglərin çapda düzgün çıxması üçün */
+        }
+        .no-print { display: none !important; }
+        
+        .print-area {
+            border: none !important;
+            box-shadow: none !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            font-size: 12px; /* Məhsul çox olduqda bir vərəqə sığması üçün şrifti bir qədər azaldırıq */
         }
         
-        /* Çap nizamlamaları */
-        @media print {
-            body {
-                background-color: white !important;
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .print-area {
-                border: none !important;
-                box-shadow: none !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                min-height: auto !important;
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-            .table-actions {
-                display: none !important;
-            }
-        }
+        .table-actions { display: none !important; }
+        
+        /* Brauzer başlıqlarını (URL, Tarix) gizlətmək üçün vacibdir */
+        header, footer, nav { display: none !important; }
+    }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen py-10 px-4">
