@@ -1,0 +1,376 @@
+/* ==========================================================================
+   1. ÜMUMİ VƏ BAZA AYARLARI
+   ========================================================================== */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+}
+
+body {
+    background-color: #f4f6f9;
+    color: #334155;
+    padding: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.app-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* ==========================================================================
+   2. ÜST İDARƏETMƏ PANELİ (MOBİL UYĞUN)
+   ========================================================================== */
+.control-panel {
+    background: #ffffff;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.control-panel input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    background-color: #f8fafc;
+}
+
+.control-panel input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* İdarəetmə Düymələri */
+.btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 15px;
+    text-align: center;
+    transition: transform 0.1s, opacity 0.2s;
+}
+
+.btn:active { transform: scale(0.98); }
+.btn-yellow { background-color: #f59e0b; }
+.btn-blue { background-color: #2563eb; }
+.btn-green { background-color: #16a34a; }
+
+/* ==========================================================================
+   3. ƏSAS STRUKTUR (SƏHİFƏ DÜZƏLİŞİ)
+   ========================================================================== */
+.main-content {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 16px;
+}
+
+/* ==========================================================================
+   4. GÖZLƏMƏ SİYAHISI PANALİ
+   ========================================================================== */
+.waiting-panel {
+    background: #ffffff;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+}
+
+.panel-header h3 { font-size: 16px; font-weight: 700; color: #1e293b; }
+.btn-refresh { background: #eff6ff; border: none; color: #2563eb; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; }
+
+.waiting-list { display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; }
+.waiting-item { display: flex; justify-content: space-between; align-items: center; background: #fffbeb; border: 1px solid #fef3c7; padding: 14px; border-radius: 8px; cursor: pointer; }
+.waiting-item-info { flex: 1; }
+.waiting-item p { font-size: 15px; font-weight: 600; color: #1e293b; }
+.waiting-item span { font-size: 12px; color: #64748b; display: block; margin-top: 4px; }
+.btn-delete-waiting { background: #fee2e2; border: none; color: #ef4444; font-weight: bold; font-size: 14px; padding: 6px 10px; border-radius: 6px; cursor: pointer; margin-left: 10px; }
+
+/* ⏳ PREMIUM İTİ UCLU GRADİENT HALQA (SHARP DUAL RING) */
+.loading-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px 0; }
+.sharp-ring-loader { width: 40px; height: 40px; border-radius: 50%; background: conic-gradient(from 0deg, transparent 20%, #ff6a0f 100%); mask: radial-gradient(farthest-side, transparent 70%, #000 71%); -webkit-mask: radial-gradient(farthest-side, transparent 70%, #000 71%); animation: spin-sharp 0.6s linear infinite; }
+@keyframes spin-sharp { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.loading-text { font-size: 13px; color: #94a3b8; font-weight: 600; }
+
+/* ==========================================================================
+   5. BİRİNCİ ŞƏKİLDƏKİ PROFESSIONAL QAİMƏ VİZUALI
+   ========================================================================== */
+.invoice-box {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Üst Başlıq */
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.brand-title { font-size: 26px; font-weight: 800; color: #2563eb; letter-spacing: 0.5px; text-transform: uppercase; }
+.brand-subtitle { font-size: 13px; color: #64748b; font-weight: 500; margin-top: 2px; }
+
+.header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+/* Şəkildəki "SATIŞ QAİMƏSİ" Teqi */
+.document-tag {
+    background-color: #eff6ff;
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.invoice-date { font-size: 13px; color: #64748b; font-weight: 500; }
+
+/* KİMDƏN / KİMƏ (MÜŞTƏRİ) BLOKLARI */
+.party-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+    border-bottom: 1px dashed #e2e8f0;
+    padding-bottom: 20px;
+}
+
+.party-box h4 {
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.party-name { font-size: 15px; font-weight: 700; color: #1e293b; }
+.party-details { font-size: 13px; color: #64748b; margin-top: 2px; }
+
+.party-box.text-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+/* Cədvəl strukturu */
+.invoice-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 12px;
+}
+
+.invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 550px;
+}
+
+/* Birinci şəkildəki kimi xətsiz, sadə və minimalist cədvəl başlığı */
+.invoice-table th {
+    color: #94a3b8;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 12px 10px;
+    border-bottom: 2px solid #f1f5f9;
+    letter-spacing: 0.5px;
+}
+
+.invoice-table td {
+    padding: 14px 10px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.invoice-table input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    outline: none;
+    color: #334155;
+    font-weight: 500;
+}
+
+.invoice-table .item-name {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.width-xs { width: 45px; }
+.width-sm { width: 80px; }
+.width-md { width: 110px; }
+
+.row-index { font-weight: 600; color: #94a3b8; font-size: 13px; }
+
+/* Sil Düyməsi */
+.btn-delete-row {
+    background: #fee2e2;
+    border: none;
+    color: #ef4444;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.btn-add {
+    background: #f8fafc;
+    color: #64748b;
+    padding: 12px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 24px;
+    transition: background 0.2s;
+}
+.btn-add:hover { background: #f1f5f9; color: #334155; }
+
+/* 1-ci şəkildəki kimi: Möhür SOLDA, Yekun SAĞDA */
+.invoice-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 30px;
+    padding-top: 20px;
+}
+
+/* Şəkildəki Möhürün Sol Aşağıda Durması */
+.footer-left {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.stamp-container {
+    width: 140px;
+    height: 140px;
+}
+
+.stamp-box { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.stamp-box img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+
+/* Şəkildəki "Yekun Ödəniş" hissəsi */
+.footer-right {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 16px;
+}
+
+.total-amount {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.total-amount span {
+    font-size: 18px;
+    font-weight: 800;
+    color: #2563eb; /* Şəkildəki göy rəngli Yekun məbləğ */
+    margin-left: 8px;
+}
+
+.footer-note-wrapper {
+    width: 100%;
+    text-align: center;
+    margin-top: 40px;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 14px;
+}
+
+.footer-note { color: #94a3b8; font-size: 12px; font-weight: 500; }
+
+/* ==========================================================================
+   6. BÖYÜK EKRANLAR ÜÇÜN AYARLAR (KOMPÜTER)
+   ========================================================================== */
+@media (min-width: 768px) {
+    body { padding: 24px; }
+    .control-panel { flex-direction: row; align-items: center; }
+    .control-panel input { width: auto; flex: 1; }
+    .actions { flex-direction: row; width: auto; }
+    .btn { width: auto; padding: 12px 24px; }
+    
+    .main-content { display: grid; grid-template-columns: 3fr 1fr; flex-direction: row; }
+    .waiting-panel { height: fit-content; }
+    .waiting-list { max-height: none; overflow-y: visible; }
+    
+    .invoice-box { padding: 40px; min-height: 297mm; }
+    .invoice-footer { flex-direction: row; justify-content: space-between; align-items: flex-end; }
+    .footer-right { width: auto; border-top: none; padding-top: 0; }
+}
+
+/* ==========================================================================
+   7. 🖨️ ÇAP REJİMİ AYARLARI
+   ========================================================================== */
+@media print {
+    .no-print, .no-print * { display: none !important; }
+    body { background: #ffffff; padding: 0; color: #000000; }
+    .main-content { display: block; }
+    .invoice-box { border: none; padding: 0; min-height: auto; box-shadow: none; }
+    .invoice-header { display: flex !important; justify-content: space-between !important; }
+    .party-section { display: grid !important; grid-template-columns: 1fr 1fr !important; }
+    .party-box.text-right { display: flex !important; flex-direction: column !important; align-items: flex-end !important; }
+    .invoice-table-wrapper { overflow: visible; }
+    .invoice-table { min-width: 100%; }
+    .invoice-table th { border-bottom: 2px solid #000000 !important; color: #000000 !important; }
+    .invoice-table td { border-bottom: 1px solid #e2e8f0 !important; }
+    .invoice-table input { border: none !important; background: transparent !important; color: #000000 !important; }
+    .invoice-footer { display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: flex-end !important; }
+    .footer-left { display: flex !important; justify-content: flex-start !important; }
+    .footer-right { display: flex !important; flex-direction: column !important; align-items: flex-end !important; }
+}

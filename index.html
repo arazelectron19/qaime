@@ -3,236 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Araz Electron - Qaimə</title>
-    
-    <link rel="icon" type="image/png" href="favicon.png">
-
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <style>
-       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    body { font-family: 'Inter', sans-serif; }
-
-    /* Çap nizamlamaları */
-    @media print {
-        @page {
-            margin: 10mm; /* Vərəqin kənarlarını tənzimləyir */
-            size: auto;
-        }
-        body {
-            background-color: white !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            -webkit-print-color-adjust: exact; /* Rənglərin çapda düzgün çıxması üçün */
-        }
-        .no-print { display: none !important; }
-        
-        .print-area {
-            border: none !important;
-            box-shadow: none !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            font-size: 12px; /* Məhsul çox olduqda bir vərəqə sığması üçün şrifti bir qədər azaldırıq */
-        }
-        
-        .table-actions { display: none !important; }
-        
-        /* Brauzer başlıqlarını (URL, Tarix) gizlətmək üçün vacibdir */
-        header, footer, nav { display: none !important; }
-    }
-    </style>
+    <title>Araz Electron - Professional Qaimə Sistemi</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
 </head>
-<body class="bg-slate-50 min-h-screen py-10 px-4">
+<body>
 
-    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="app-container">
         
-        <div class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 h-fit sticky top-6 no-print">
-            <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-                <span class="w-2 h-6 bg-blue-600 rounded-full"></span>
-                Məhsul Əlavə Et
-            </h2>
+        <div class="control-panel no-print">
+            <input type="text" id="customer-input" placeholder="Usta / Müştəri Adı">
             
-            <div class="space-y-4" id="product-form">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Məhsulun Adı</label>
-                    <input type="text" id="prod-name" placeholder="Məs: Led 12v" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-sm">
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Miqdar (Say)</label>
-                        <input type="number" id="prod-qty" value="1" min="1" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Qiymət</label>
-                        <input type="number" id="prod-price" placeholder="Məs: 12.00" step="0.01" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-sm">
-                    </div>
-                </div>
-
-                <button onclick="addProduct()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl transition-all shadow-sm shadow-blue-200 cursor-pointer text-sm">
-                    + Siyahıya Əlavə Et
-                </button>
+            <div class="actions">
+                <button id="btn-waiting" class="btn btn-yellow">Gözləməyə Al</button>
+                <button id="btn-print" class="btn btn-blue">Çap Et</button>
+                <button id="btn-download" class="btn btn-green">Yüklə (PDF)</button>
             </div>
-
-            <hr class="my-6 border-slate-100">
-
-            <div class="space-y-4">
-                <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Müştəri Məlumatları</h3>
-                <div>
-                    <input type="text" id="client-name" placeholder="Müştərinin Adı / Telefonu" oninput="updateClientInfo()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-sm">
-                </div>
-            </div>
-
-            <button onclick="generatePDF()" class="w-full mt-6 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3.5 rounded-xl transition-all shadow-sm shadow-emerald-200 cursor-pointer flex items-center justify-center gap-2">
-                📂 PDF / Qaimə Çıxar
-            </button>
         </div>
 
-        <div class="lg:col-span-2 bg-white p-8 rounded-2xl shadow-sm border border-slate-100 min-h-[842px] relative flex flex-col justify-between print-area" id="invoice-container">
+        <div class="main-content">
             
-            <div>
-                <div class="flex justify-between items-start border-b border-slate-100 pb-6">
+            <div id="printable-invoice" class="invoice-box">
+                
+                <div class="invoice-header">
                     <div>
-                        <h1 class="text-2xl font-black tracking-tight text-blue-600">ARAZ ELECTRON</h1>
-                        <p class="text-xs text-slate-400 mt-1 font-medium">Elektronika və Texniki Dəstək Xidmətləri</p>
+                        <h1 class="brand-title">ARAZ ELECTRON</h1>
+                        <p class="brand-subtitle">Elektronika və Texniki Dəstək Xidmətləri</p>
                     </div>
-                    <div class="text-right">
-                        <div class="bg-blue-50 text-blue-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider inline-block mb-2">SATIŞ QAİMƏSİ</div>
-                        <p class="text-xs text-slate-500" id="invoice-date">Tarix: --.--.----</p>
+                    <div class="header-right">
+                        <div class="document-tag">SATIŞ QAİMƏSİ</div>
+                        <p class="invoice-date">Tarix: <span>30.06.2026</span></p>
                     </div>
                 </div>
+<div class="party-section">
+    <div class="party-box"></div>
+    
+    <div class="party-box text-right">
+        <h4>KİMƏ (MÜŞTƏRİ):</h4>
+        <p class="party-name" id="customer-name-view">_______________</p>        
+    </div>
+</div>
 
-                <div class="grid grid-cols-2 gap-4 my-6 text-sm">
-                    <div>
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Kimdən:</span>
-                        <strong class="text-slate-800 block">Araz Electron</strong>
-                        <span class="text-xs text-slate-500 block">Beyləqan</span>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Kimə (Müştəri):</span>
-                        <strong class="text-slate-800 block" id="display-client">Nümunə Müştəri ASC</strong>
-                    </div>
+                <div class="invoice-table-wrapper">
+                    <table class="invoice-table">
+                        <thead>
+                            <tr>
+                                <th class="text-center width-xs">#</th>
+                                <th>Məhsulun Adı</th>
+                                <th class="text-center width-sm">Miqdar</th>
+                                <th class="text-right width-md">Qiymət</th>
+                                <th class="text-right width-md">Cəmi</th>
+                                <th class="text-center width-xs no-print">Sil</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invoice-items-body">
+                            </tbody>
+                    </table>
                 </div>
 
-                <table class="w-full text-left border-collapse mt-8">
-                    <thead>
-                        <tr class="border-b border-slate-200 text-slate-400 text-xs font-bold uppercase tracking-wider">
-                            <th class="py-3 pl-2 w-10">#</th>
-                            <th class="py-3">Məhsulun Adı</th>
-                            <th class="py-3 text-center w-24">Miqdar</th>
-                            <th class="py-3 text-right w-28">Qiymət</th>
-                            <th class="py-3 text-right pr-2 w-32">Cəmi</th>
-                            <th class="py-3 text-center w-12 print:hidden table-actions">Sil</th>
-                        </tr>
-                    </thead>
-                    <tbody id="invoice-rows" class="text-sm text-slate-700 divide-y divide-slate-100">
-                        </tbody>
-                </table>
-            </div>
+                <button id="btn-add-item" class="btn-add no-print">+ Yeni Mal Əlavə Et</button>
 
-            <div class="mt-12">
-                <div class="flex justify-between items-end border-t border-slate-100 pt-6">
+                <div class="invoice-footer">
+                    <div class="footer-left">
+                        <div class="stamp-container">
+                            <div class="stamp-box">
+                                <img src="mohur.png" alt="Araz Electron Möhür" onerror="this.style.display='none';">
+                            </div>
+                        </div>
+                    </div>
                     
-                    <div class="relative w-56 h-56 flex items-center justify-center">
-                        <img id="stamp-img" class="w-full h-full object-contain object-left mix-blend-multiply" 
-                             src="pecat.png" 
-                             alt="Araz Electron Möhür">
-                    </div>
-
-                    <div class="w-64 text-sm text-right">
-                        <div class="flex justify-between text-base font-bold text-slate-800 border-t border-slate-200 pt-3">
-                            <span>Yekun Ödəniş:</span>
-                            <span class="text-blue-600" id="grand-total">0.00 AZN</span>
+                    <div class="footer-right">
+                        <div class="total-amount">
+                            Yekun Ödəniş: <span id="total-price-view">0.00</span> AZN
                         </div>
                     </div>
                 </div>
 
-                <div class="text-center text-[11px] text-slate-400 mt-12 border-t border-slate-100 pt-4">
-                    Araz Electron bizi seçdiyiniz üçün təşəkkür edirik!
+                <div class="footer-note-wrapper">
+                    <p class="footer-note">Araz Electron bizi seçdiyiniz üçün təşəkkür edirik!</p>
                 </div>
+
+            </div>
+
+            <div class="waiting-panel no-print">
+                <div class="panel-header">
+                    <h3>⏳ Gözləmə Siyahısı</h3>
+                    <button id="btn-refresh" class="btn-refresh">Yenilə</button>
+                </div>
+                <div id="waiting-list-container" class="waiting-list">
+                    </div>
             </div>
 
         </div>
     </div>
 
-    <script>
-        let products = [];
-
-        // Tarixi yenilə
-        const today = new Date();
-        document.getElementById('invoice-date').innerText = `Tarix: ${String(today.getDate()).padStart(2, '0')}.${String(today.getMonth() + 1).padStart(2, '0')}.${today.getFullYear()}`;
-
-        function updateClientInfo() {
-            const val = document.getElementById('client-name').value;
-            document.getElementById('display-client').innerText = val.trim() !== "" ? val : "Nümunə Müştəri ASC";
-        }
-
-        function addProduct() {
-            const nameInput = document.getElementById('prod-name');
-            const qtyInput = document.getElementById('prod-qty');
-            const priceInput = document.getElementById('prod-price');
-
-            if(nameInput.value.trim() === "" || priceInput.value === "" || parseFloat(priceInput.value) <= 0) {
-                alert("Zəhmət olmasa məhsul adını və qiymətini düzgün daxil edin.");
-                return;
-            }
-
-            const item = {
-                id: Date.now(),
-                name: nameInput.value,
-                qty: parseInt(qtyInput.value),
-                price: parseFloat(priceInput.value)
-            };
-
-            products.push(item);
-            renderInvoice();
-
-            nameInput.value = "";
-            qtyInput.value = "1";
-            priceInput.value = "";
-            nameInput.focus();
-        }
-
-        function deleteProduct(id) {
-            products = products.filter(p => p.id !== id);
-            renderInvoice();
-        }
-
-        function renderInvoice() {
-            const rowsContainer = document.getElementById('invoice-rows');
-            rowsContainer.innerHTML = "";
-            let total = 0;
-
-            products.forEach((p, index) => {
-                const itemTotal = p.qty * p.price;
-                total += itemTotal;
-
-                rowsContainer.innerHTML += `
-                    <tr class="hover:bg-slate-50/50 transition-colors">
-                        <td class="py-3.5 pl-2 font-medium text-slate-400">${index + 1}</td>
-                        <td class="py-3.5 font-semibold text-slate-800">${p.name}</td>
-                        <td class="py-3.5 text-center font-medium">${p.qty} ədəd</td>
-                        <td class="py-3.5 text-right font-medium">${p.price.toFixed(2)} AZN</td>
-                        <td class="py-3.5 text-right font-semibold text-slate-900 pr-2">${itemTotal.toFixed(2)} AZN</td>
-                        <td class="py-3.5 text-center print:hidden table-actions">
-                            <button onclick="deleteProduct(${p.id})" class="text-rose-500 hover:text-rose-700 cursor-pointer p-1">✕</button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            // Arxa fonda hesablama aparılır və yalnız Yekun Ödəniş xanasına ötürülür
-            document.getElementById('grand-total').innerText = total.toFixed(2) + " AZN";
-        }
-
-        function generatePDF() {
-            if(products.length === 0) {
-                alert("Qaimə boşdur. Öncə məhsul əlavə edin.");
-                return;
-            }
-            window.print();
-        }
-    </script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
