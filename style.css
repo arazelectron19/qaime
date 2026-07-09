@@ -418,3 +418,37 @@ body {
     .footer-note-wrapper { display: block !important; text-align: center !important; margin-top: 40px !important; border-top: 1px solid #cbd5e1 !important; padding-top: 14px !important; }
     .footer-note { color: #64748b !important; font-size: 12px !important; }
 }
+
+/* ==========================================================================
+   QAİMƏ VƏRƏQİ ÜÇÜN LOQO AYARLARI
+   ========================================================================== */
+/* ==========================================================================
+   QAİMƏ VƏRƏQİ ÜÇÜN LOQO AYARLARI (BÖYÜDÜLMÜŞ VARİANT)
+   ========================================================================== */
+.invoice-logo {
+    display: none; /* Ekrandakı işçi paneldə gizli qalır */
+    height: 100px;  /* Loqonun hündürlüyü 55px-dən 85px-ə qaldırıldı */
+    width: auto;   /* Proporsiyanın pozulmaması üçün */
+    object-fit: contain;
+    margin-bottom: 8px; /* Altındakı yazı ilə arasında professional məsafə */
+}
+
+/* Çap rejimi (A4) aktivləşəndə loqo tənzimləmələri */
+@media print {
+    .invoice-logo {
+        display: block !important; 
+    }
+    .brand-title {
+        display: none !important; /* Əgər köhnə yazı formatı qalıbsa, tam gizlət */
+    }
+    .brand-box {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+    .brand-subtitle {
+        font-size: 14px !important; /* Loqo böyüdüyü üçün alt mətni də bir az iriləşdirdik */
+        color: #475569 !important;
+        margin-top: 2px !important;
+    }
+}
