@@ -1,13 +1,14 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, query, where, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-// Firebase məlumatların
+
+// Firebase məlumatların (Orijinal sazlamaların tam qorundu)
 const firebaseConfig = {
     apiKey: "AIzaSyA6TGcnhFOErD5gd4XRNBjRjLucKVuphZY",
-  authDomain: "qaime-77f63.firebaseapp.com",
-  projectId: "qaime-77f63",
-  storageBucket: "qaime-77f63.firebasestorage.app",
-  messagingSenderId: "879558627020",
-  appId: "1:879558627020:web:980a57009e3377eea67c69"
+    authDomain: "qaime-77f63.firebaseapp.com",
+    projectId: "qaime-77f63",
+    storageBucket: "qaime-77f63.firebasestorage.app",
+    messagingSenderId: "879558627020",
+    appId: "1:879558627020:web:980a57009e3377eea67c69"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -32,7 +33,7 @@ customerInput.addEventListener('input', (e) => {
     customerNameView.textContent = e.target.value || '_______________';
 });
 
-// Cədvəli Sıra Nömrələri və Silmə Düyməsi ilə Ekrana Basmaq
+// CƏDVƏLİ SIRA NÖMRƏLƏRİ VƏ SÜRET HADİSƏLƏRİ İLƏ EKRANA BASMAQ
 function renderItems() {
     itemsBody.innerHTML = '';
     let grandTotal = 0;
@@ -44,55 +45,73 @@ function renderItems() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td class="text-center row-index">${index + 1}</td>
-            <td><input type="text" class="item-name" value="${item.name}" placeholder="Malın və ya xidmətin adı" data-index="${index}"></td>
-            <td class="text-center"><input type="number" class="item-qty text-center" value="${item.qty}" data-index="${index}"></td>
-            <td class="text-right"><input type="number" class="item-price text-right" value="${item.price}" data-index="${index}"></td>
-            <td class="text-right font-medium">${rowTotal.toFixed(2)} AZN</td>
+            <td>
+                <input type="text" class="item-name" value="${item.name}" placeholder="Malın adı">
+            </td>
+            <td class="text-center">
+                <input type="number" class="item-qty text-center" value="${item.qty}">
+            </td>
+            <td class="text-right">
+                <input type="number" class="item-price text-right" value="${item.price}" step="0.01" placeholder="0.00">
+            </td>
+            <td class="text-right font-medium row-total-display">${rowTotal.toFixed(2)} AZN</td>
             <td class="text-center no-print">
-                <button class="btn-delete-row" data-index="${index}">×</button>
+                <button class="btn-delete-row">×</button>
             </td>
         `;
+
+        // Cari sətirdəki elementləri seçirik
+        const nameInput = tr.querySelector('.item-name');
+        const qtyInput = tr.querySelector('.item-qty');
+        const priceInput = tr.querySelector('.item-price');
+        const rowTotalDisplay = tr.querySelector('.row-total-display');
+        const btnDeleteRow = tr.querySelector('.btn-delete-row');
+
+        // Malın adı dəyişəndə massivə anında yazır
+        nameInput.addEventListener('input', (e) => {
+            item.name = e.target.value;
+        });
+
+        // MİQDAR: Yazarkən ləngiməməsi üçün yalnız bu sətir və yekun dəyişir
+        qtyInput.addEventListener('input', (e) => {
+            const val = parseInt(e.target.value) || 0;
+            item.qty = val;
+            rowTotalDisplay.textContent = (item.qty * item.price).toFixed(2) + " AZN";
+            fastCalculateTotal(); // Brauzeri dondurmadan yekun məbləği yeniləyir
+        });
+
+        // QİYMƏT: İlişmədən, nöqtə və rəqəmləri sərbəst yazmaq üçün sətir daxili hadisə
+        priceInput.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value) || 0;
+            item.price = val;
+            rowTotalDisplay.textContent = (item.qty * item.price).toFixed(2) + " AZN";
+            fastCalculateTotal(); // Brauzeri dondurmadan yekun məbləği yeniləyir
+        });
+
+        // Klaviaturadan yazmağa başlayanda xanadakı lazımsız '0'-ı avtomatik silir
+        qtyInput.addEventListener('focus', (e) => { if(e.target.value == '0') e.target.value = ''; });
+        priceInput.addEventListener('focus', (e) => { if(e.target.value == '0') e.target.value = ''; });
+
+        // Sətir Silmə Hadisəsi
+        btnDeleteRow.addEventListener('click', () => {
+            if(invoiceItems.length === 1) {
+                invoiceItems = [{ name: '', qty: 1, price: 0 }];
+            } else {
+                invoiceItems.splice(index, 1);
+            }
+            renderItems(); // Silinmədə sıra nömrələri düzəlsin deyə tam yenilənir
+        });
+
         itemsBody.appendChild(tr);
     });
 
     totalPriceView.textContent = grandTotal.toFixed(2);
-    attachInputEvents();
 }
 
-function attachInputEvents() {
-    document.querySelectorAll('.item-name').forEach(input => {
-        input.addEventListener('input', (e) => {
-            invoiceItems[e.target.dataset.index].name = e.target.value;
-        });
-    });
-
-    document.querySelectorAll('.item-qty').forEach(input => {
-        input.addEventListener('input', (e) => {
-            invoiceItems[e.target.dataset.index].qty = Number(e.target.value) || 0;
-            renderItems();
-        });
-    });
-
-    document.querySelectorAll('.item-price').forEach(input => {
-        input.addEventListener('input', (e) => {
-            invoiceItems[e.target.dataset.index].price = Number(e.target.value) || 0;
-            renderItems();
-        });
-    });
-
-    // Sətir Silmə Hadisəsi
-    document.querySelectorAll('.btn-delete-row').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const indexToRemove = Number(e.target.dataset.index);
-            // Əgər tək sətir qalıbsa, silmək əvəzinə içini təmizləsin
-            if(invoiceItems.length === 1) {
-                invoiceItems = [{ name: '', qty: 1, price: 0 }];
-            } else {
-                invoiceItems.splice(indexToRemove, 1);
-            }
-            renderItems();
-        });
-    });
+// Dom elementlərini sarsıtmayan, klaviaturanın sürətinə çatacaq yüngül hesablama funksiyası
+function fastCalculateTotal() {
+    const total = invoiceItems.reduce((sum, item) => sum + (item.qty * item.price), 0);
+    totalPriceView.textContent = total.toFixed(2);
 }
 
 btnAddItem.addEventListener('click', () => {
@@ -100,7 +119,7 @@ btnAddItem.addEventListener('click', () => {
     renderItems();
 });
 
-// GÖZLƏMƏYƏ ALMA
+// GÖZLƏMƏYƏ ALMA (YARATMA VƏ YENİLƏMƏ)
 document.getElementById('btn-waiting').addEventListener('click', async () => {
     const customerName = customerInput.value.trim();
     if (!customerName) return alert("Zəhmət olmasa Usta və ya Müştəri adını daxil edin!");
@@ -142,7 +161,7 @@ async function fetchWaitingList() {
         waitingListContainer.innerHTML = '';
 
         if(querySnapshot.empty) {
-            waitingListContainer.innerHTML = '<p style="font-size:12px; color:#9ca3af;">Gözləyən iş yoxdur.</p>';
+            waitingListContainer.innerHTML = '<p style="font-size:12px; color:#9ca3af; text-align:center;">Gözləyən iş yoxdur.</p>';
             return;
         }
 
@@ -153,7 +172,6 @@ async function fetchWaitingList() {
             const div = document.createElement('div');
             div.className = 'waiting-item';
             
-            // İnformasiya bloku və sil düyməsini daxil edirik
             div.innerHTML = `
                 <div class="waiting-item-info" data-id="${docId}">
                     <p>${data.customerName}</p>
@@ -171,24 +189,22 @@ async function fetchWaitingList() {
                 renderItems();
             });
 
-            // "Sil" düyməsinə klik edəndə bazadan silmək (Silmə hadisəsi)
+            // "Sil" düyməsinə klik edəndə Firebase-dən tamamilə silmək
             div.querySelector('.btn-delete-waiting').addEventListener('click', async (e) => {
-                e.stopPropagation(); // Üstdəki qaiməni yükləmə hadisəsinin işə düşməsini əngəlləyir
+                e.stopPropagation(); // Arxa plandakı sətir klikini bloklayır
                 
                 const confirmDelete = confirm(`${data.customerName} adlı müştərinin qaiməsini gözləmədən silmək istədiyinizə əminsiniz?`);
                 if (!confirmDelete) return;
 
                 try {
-                    // Firebase-dən sənədi silirik
                     await deleteDoc(doc(db, "waiting_invoices", docId));
                     
-                    // Əgər silinən qaimə hal-hazırda ekranda açıqdırsa, ekranı da sıfırlasın
                     if (currentActiveDocId === docId) {
                         resetForm();
                     }
                     
                     alert("Qaimə gözləmə siyahısından silindi!");
-                    fetchWaitingList(); // Siyahını yenilə
+                    fetchWaitingList(); 
                 } catch (err) {
                     console.error("Silərkən xəta baş verdi:", err);
                     alert("Xəta: Silmək mümkün olmadı.");
