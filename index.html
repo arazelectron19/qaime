@@ -3,103 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Araz Electron - Professional Qaimə Sistemi</title>
+    <title>Araz Electron - Satış Qaiməsi</title>
     <link rel="stylesheet" href="style.css">
+    <!-- html2pdf Kitabxanası -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    
-    <link rel="icon" type="image/png" sizes="any" href="logo.png?v=3">
-<link rel="shortcut icon" type="image/png" href="logo.png?v=3">
-<link rel="apple-touch-icon" href="logo.png?v=3">
+       
+       <link rel="icon" type="image/png" href="/favicon.png">
 </head>
 <body>
 
-    <div class="app-container">
-        
-        <div class="control-panel no-print">
-            <input type="text" id="customer-input" placeholder="Müştəri...">
-            
+    <div class="app-container no-print">
+        <!-- Üst İdarəetmə Paneli -->
+        <div class="control-panel">
+            <input type="text" id="customer-input" placeholder="Usta və ya Müştəri adı daxil edin...">
             <div class="actions">
-                <button id="btn-waiting" class="btn btn-yellow">Gözləməyə Al</button>
-                <button id="btn-print" class="btn btn-blue">Çap Et</button>
-                <button id="btn-download" class="btn btn-green">Yüklə (PDF)</button>
+                <button class="btn btn-blue" id="btn-print">Çap Et</button>
+                <button class="btn btn-yellow" id="btn-waiting">Gözləməyə Al</button>
+                <button class="btn btn-green" id="btn-download">YÜKLƏ (PDF)</button>
             </div>
         </div>
 
-        <div class="main-content">
-            
-            <div id="printable-invoice" class="invoice-box">
-                
-                <div class="invoice-header">
-    <div class="brand-box">
-        <img src="logo2.png" alt="Araz Electron Logo" class="invoice-logo">
-        <p class="brand-subtitle">Elektronika və Texniki Dəstək Xidmətləri</p>
-    </div>
-    <div class="invoice-type-box">
-        <span class="document-tag">SATIŞ QAİMƏSİ</span>
-    </div>
-</div>
-<div class="party-section">
-    <div class="party-box"></div>
-    
-    <div class="party-box text-right">
-        <h4>KİMƏ (MÜŞTƏRİ):</h4>
-        <p class="party-name" id="customer-name-view">_______________</p>        
-    </div>
-</div>
-
+      <div class="main-content">
+    <!-- Sol tərəf: Daxiletmə və Cədvəl -->
+            <div class="invoice-box">
                 <div class="invoice-table-wrapper">
                     <table class="invoice-table">
                         <thead>
                             <tr>
-                                <th class="text-center width-xs">#</th>
-                                <th>Məhsulun Adı</th>
-                                <th class="text-center width-sm">Miqdar</th>
-                                <th class="text-right width-md">Qiymət</th>
-                                <th class="text-right width-md">Cəmi</th>
-                                <th class="text-center width-xs no-print">Sil</th>
+                                <th style="width: 5%;">#</th>
+                                <th style="width: 50%;">Məhsulun Adı</th>
+                                <th style="width: 15%;">Miqdar</th>
+                                <th style="width: 15%;">Qiymət</th>
+                                <th style="width: 10%;">Cəmi</th>
+                                <th style="width: 5%;">Sil</th>
                             </tr>
                         </thead>
                         <tbody id="invoice-items-body">
-                            </tbody>
+                            <!-- Dinamik sətirlər bura gələcək -->
+                        </tbody>
                     </table>
                 </div>
 
-                <button id="btn-add-item" class="btn-add no-print">+ Yeni Mal Əlavə Et</button>
+                <button class="btn-add-row" id="btn-add-item">+ Yeni Mal Əlavə Et</button>
 
                 <div class="invoice-footer">
-                    <div class="footer-left">
-                        <div class="stamp-container">
-                            <div class="stamp-box">
-                                <img src="mohur.png" alt="Araz Electron Möhür" onerror="this.style.display='none';">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="footer-right">
-                        <div class="total-amount">
-                            Yekun Ödəniş: <span id="total-price-view">0.00</span> AZN
-                        </div>
-                    </div>
+                    <div class="total-amount">Yekun Ödəniş: <span id="total-price-view">0.00</span> AZN</div>
                 </div>
-
-                <div class="footer-note-wrapper">
-                    <p class="footer-note">Araz Electron bizi seçdiyiniz üçün təşəkkür edirik!</p>
-                </div>
-
             </div>
 
-            <div class="waiting-panel no-print">
+            <!-- Sağ tərəf: Gözləmə Paneli -->
+            <div class="waiting-panel">
                 <div class="panel-header">
-                    <h3>⏳ Gözləmə Siyahısı</h3>
-                    <button id="btn-refresh" class="btn-refresh">Yenilə</button>
+                    <h3>Gözləyən Qaimələr</h3>
+                    <button class="btn-archive-nav" onclick="window.location.href='arxiv/arxiv.html'">Arxiv</button>
+                    <button class="btn-refresh" id="btn-refresh">Yenilə</button>
                 </div>
-                <div id="waiting-list-container" class="waiting-list">
-                    </div>
+                <div class="waiting-list" id="waiting-list-container">
+                    <!-- Gözləyən siyahı bura gələcək -->
+                </div>
             </div>
-
         </div>
     </div>
 
-    <script type="module" src="script.js"></script>
+    <!-- ==========================================================================
+         AĞ REJİMLİ RƏSMİ QƏBZ GENERATOR SAHƏSİ (EKRANDA GÖRÜNMƏYƏCƏK)
+         ========================================================================== -->
+    <div id="hidden-pdf-container" style="position: absolute; left: -9999px; top: -9999px; width: 790px;">
+        <div id="official-print-page" class="a4-official-page">
+            <div class="print-header">
+                <div class="print-header-left">
+                    <h1 class="document-title">SATIŞ QAİMƏSİ</h1>
+                    <div class="print-customer-box">
+                        <span class="lbl">KİMƏ (MÜŞTƏRİ):</span>
+                        <div class="customer-line" id="pdf-customer-name">_______________</div>
+                    </div>
+                </div>
+                <div class="print-header-right">
+                    <h2 class="company-name">ARAZ ELECTRON</h2>
+                    <span class="company-sub">Elektronika və Texniki Dəstək Xidmətləri</span>
+                    <div class="company-contacts">
+                        <p>📍 Beyləqan r. Magistral yol</p>
+                        <p>🌐 arazelectron.com</p>
+                        <p>✉︎ info@arazelectron.com</p>
+                        <p>📞 +994505946771</p>
+                    </div>
+                </div>
+            </div>
+
+            <table class="print-table">
+                <thead>
+                    <tr>
+                        <th style="width: 8%; text-align: center;">#</th>
+                        <th style="text-align: left; width: 47%;">MƏHSULUN ADI</th>
+                        <th style="width: 15%; text-align: center;">MİQDAR</th>
+                        <th style="width: 15%; text-align: right;">QİYMƏT</th>
+                        <th style="width: 15%; text-align: right;">CƏMİ</th>
+                    </tr>
+                </thead>
+                <tbody id="pdf-items-body">
+                    <!-- Dinamik olaraq ancaq mətn şəklində dolacaq -->
+                </tbody>
+            </table>
+
+            <div class="print-footer">
+    <!-- Möhür və Yekun Ödəniş yan-yana durması üçün tək bir qutuya yığıldı -->
+             <div class="print-total-wrapper">
+               <div class="stamp-section">
+            <img src="mohur.png" alt="Möhür" onerror="this.style.display='none'">
+              </div>
+                <div class="print-total-section">
+                     Yekun Ödəniş: <strong id="pdf-total-price">0.00 AZN</strong>
+                 </div>
+             </div>
+         </div>
+
+            <div class="print-note">
+                Araz Electron bizi seçdiyiniz üçün təşəkkür edirik!
+            </div>
+        </div>
+    </div>
+
+     <script type="module" src="app.js"></script>
+
 </body>
 </html>
