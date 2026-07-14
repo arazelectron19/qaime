@@ -1,3 +1,9 @@
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log("Service Worker aktivdir"))
+        .catch(err => console.log("SW xətası:", err));
+}
+
 import { 
     db, 
     collection, 
@@ -6,25 +12,84 @@ import {
     query, 
     orderBy, 
     serverTimestamp 
-} from "./firbase.js"; // (.js uzantısı mütləq əlavə olunmalıdır)
+} from "./firbase.js"; 
 
-// Firebase funksiyalarını rəsmi CDN-dən tam şəkildə çəkirik (deleteDoc və doc bura əlavə edildi!)
 import { where, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+// ==========================================
+// YAŞIL VƏ QIRMIZI BİLDİRİŞ FUNKSİYASI
+// ==========================================
+function showNotification(message, type = 'success') {
+    const oldNotification = document.getElementById('custom-notification');
+    if (oldNotification) oldNotification.remove();
+
+    const notification = document.createElement('div');
+    notification.id = 'custom-notification';
+    notification.innerText = message;
+
+    Object.assign(notification.style, {
+        position: 'fixed',
+        top: '20px',
+        right: '20px',
+        padding: '12px 24px',
+        borderRadius: '6px',
+        color: '#ffffff',
+        fontWeight: 'bold',
+        fontSize: '14px',
+        zIndex: '10000',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+        transition: 'all 0.3s ease',
+        opacity: '0',
+        transform: 'translateY(-20px)'
+    });
+
+    if (type === 'success') {
+        notification.style.backgroundColor = '#10b981'; // Yaşıl
+        notification.style.borderLeft = '5px solid #047857';
+    } else {
+        notification.style.backgroundColor = '#ef4444'; // Qırmızı
+        notification.style.borderLeft = '5px solid #b91c1c';
+    }
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateY(0)';
+    }, 10);
+
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateY(-20px)';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// DOM Elementləri
 const itemsBody = document.getElementById('invoice-items-body');
 const btnAddItem = document.getElementById('btn-add-item');
 const customerInput = document.getElementById('customer-input');
 const totalPriceView = document.getElementById('total-price-view');
 const waitingListContainer = document.getElementById('waiting-list-container');
+const btnNewInvoice = document.getElementById('btn-new-invoice'); // HTML-də id="btn-new-invoice" etdik
 
 let invoiceItems = [{ name: '', qty: 1, price: 0 }];
 let currentActiveDocId = null;
 
+// İlkin Yüklənmə
 document.addEventListener('DOMContentLoaded', () => {
     renderItems();
     fetchWaitingList();
 });
 
+// Yeni Qaimə (Sıfırlama) Düyməsi
+if (btnNewInvoice) {
+    btnNewInvoice.addEventListener('click', () => {
+        resetForm(); 
+    });
+}
+
+// Cədvəli Ekrana Çıxarma Funksiyası
 function renderItems() {
     itemsBody.innerHTML = '';
     let grandTotal = 0;
@@ -83,16 +148,19 @@ function renderItems() {
     totalPriceView.textContent = grandTotal.toFixed(2);
 }
 
+// Sürətli Yekun Hesablama
 function fastCalculateTotal() {
     const total = invoiceItems.reduce((sum, item) => sum + (item.qty * item.price), 0);
     totalPriceView.textContent = total.toFixed(2);
 }
 
+// Yeni Sətir Əlavə Et
 btnAddItem.addEventListener('click', () => {
     invoiceItems.push({ name: '', qty: 1, price: 0 });
     renderItems();
 });
 
+// PDF/Çap Önizləməsini Hazırlama
 function prepareOfficialPrintPage() {
     const pdfCustomerName = document.getElementById('pdf-customer-name');
     const pdfItemsBody = document.getElementById('pdf-items-body');
@@ -120,10 +188,18 @@ function prepareOfficialPrintPage() {
     pdfTotalPrice.textContent = grandTotal.toFixed(2) + " AZN";
 }
 
+// YÜKLƏ (PDF) DÜYMƏSİ
 document.getElementById('btn-download').addEventListener('click', async () => {
+    const customerNameClean = customerInput.value.trim();
+    const isFirstItemEmpty = invoiceItems.length === 1 && !invoiceItems[0].name.trim();
+
+    if (!customerNameClean || isFirstItemEmpty) {
+        return showNotification("Müştəri adı və məhsul əlavə edin", "error");
+    }
+
     prepareOfficialPrintPage();
     const element = document.getElementById('official-print-page');
-    const customerName = customerInput.value.trim() || 'Qaime';
+    const customerName = customerNameClean || 'Qaime';
 
     const opt = {
         margin:       15,
@@ -137,17 +213,29 @@ document.getElementById('btn-download').addEventListener('click', async () => {
     html2pdf().from(element).set(opt).save().catch(err => console.error("PDF Xətası:", err));
 });
 
+// ÇAP ET DÜYMƏSİ
 document.getElementById('btn-print').addEventListener('click', async (e) => {
     e.preventDefault();
     e.stopImmediatePropagation();
+    
+    const isFirstItemEmpty = invoiceItems.length === 1 && !invoiceItems[0].name.trim();
+    if (!customerInput.value.trim() || isFirstItemEmpty) {
+        return showNotification("Müştəri adı və məhsul əlavə edin", "error");
+    }
+
     prepareOfficialPrintPage();
     await addInvoiceToArchive('print');
     window.print();
 });
 
+// GÖZLƏMƏYƏ AL / YENİLƏ DÜYMƏSİ
 document.getElementById('btn-waiting').addEventListener('click', async () => {
     const customerName = customerInput.value.trim();
-    if (!customerName) return alert("Zəhmət olmasa Müştəri adını daxil edin!");
+    const isFirstItemEmpty = invoiceItems.length === 1 && !invoiceItems[0].name.trim();
+
+    if (!customerName || isFirstItemEmpty) {
+        return showNotification("Müştəri adı və məhsul əlavə edin", "error");
+    }
 
     const data = {
         customerName: customerName,
@@ -159,16 +247,21 @@ document.getElementById('btn-waiting').addEventListener('click', async () => {
     try {
         if (currentActiveDocId) {
             await updateDoc(doc(db, "waiting_invoices", currentActiveDocId), data);
-            alert("Qaimə yeniləndi!");
+            showNotification("Qaimə uğurla yeniləndi!", "success");
         } else {
             await addDoc(collection(db, "waiting_invoices"), data);
-            alert("Qaimə gözləməyə alındı!");
+            showNotification("Qaimə gözləməyə alındı!", "success");
         }
+        
         resetForm();
-        fetchWaitingList();
-    } catch (e) { console.error("Firebase Xətası:", e); }
+        await fetchWaitingList();
+    } catch (e) { 
+        console.error("Firebase Xətası:", e); 
+        showNotification("Xəta baş verdi!", "error");
+    }
 });
 
+// Gözləmə Siyahısını Çəkmək
 async function fetchWaitingList() {
     waitingListContainer.innerHTML = '<div class="loading-wrapper"><div class="sharp-ring-loader"></div></div>';
     try {
@@ -202,6 +295,11 @@ async function fetchWaitingList() {
                 customerInput.value = data.customerName;
                 invoiceItems = data.items;
                 renderItems();
+                
+                const waitingBtn = document.getElementById('btn-waiting');
+                if (waitingBtn) {
+                    waitingBtn.textContent = 'Yenilə';
+                }
             });
 
             const btnDelete = div.querySelector('.btn-delete-waiting');
@@ -209,7 +307,6 @@ async function fetchWaitingList() {
 
             btnDelete.addEventListener('click', (e) => {
                 e.stopPropagation();
-                
                 btnDelete.style.display = 'none';
                 
                 const confirmBox = document.createElement('div');
@@ -220,21 +317,16 @@ async function fetchWaitingList() {
                     <button class="btn-confirm-no" style="background:#4b5563; color:#fff; border:none; padding:3px 8px; margin:0 3px; cursor:pointer; border-radius:3px;">Xeyr</button>
                 `;
 
-                // BƏLİ DÜYMƏSİ - İndi tam işləkdir!
                 confirmBox.querySelector('.btn-confirm-yes').addEventListener('click', async (eSub) => {
                     eSub.stopPropagation();
                     try {
-                        // Firebase-dən silirik
                         await deleteDoc(doc(db, "waiting_invoices", docId));
-                        
-                        // Əgər silinən sənəd hazırda ekranda redaktə edilirsə, formanı təmizləyirik
                         if (currentActiveDocId === docId) resetForm();
-                        
-                        // Siyahını yeniləyirik
                         fetchWaitingList();
+                        showNotification("Qaimə uğurla silindi!", "success");
                     } catch (err) {
                         console.error("Silmə xətası:", err);
-                        alert("Silmək mümkün olmadı!");
+                        showNotification("Silmək mümkün olmadı!", "error");
                     }
                 });
 
@@ -254,13 +346,20 @@ async function fetchWaitingList() {
 
 document.getElementById('btn-refresh').addEventListener('click', fetchWaitingList);
 
+// Formanı Sıfırlama Funksiyası
 function resetForm() {
     customerInput.value = '';
     invoiceItems = [{ name: '', qty: 1, price: 0 }];
     currentActiveDocId = null;
     renderItems();
+
+    const waitingBtn = document.getElementById('btn-waiting');
+    if (waitingBtn) {
+        waitingBtn.textContent = 'Gözləməyə Al';
+    }
 }
 
+// Arxivə Yazma Funksiyası
 async function addInvoiceToArchive(actionType) {
     try {
         const customerName = customerInput.value.trim() || 'Naməlum Müştəri';

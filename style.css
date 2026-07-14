@@ -58,16 +58,47 @@ body {
 /* --- DÜYMƏLƏRİN ƏSAS VƏ HOVER VƏZİYYƏTLƏRİ --- */
 /* --- DÜYMƏLƏRİN İLKİN VƏZİYYƏTİ (ÇAP ET KİMİ TÜND VƏ İNCE) --- */
 
-/* 1. Çap Et Düyməsi (.btn-blue) */
 .btn-blue { 
-    background-color: #0b132b; 
-    border: 1px solid #3a506b; 
-    color: #5bc0be; 
+    background-color: #0b132b;          /* Normalda içi tünd */
+    border: 1px solid #5bc0be;          /* Sərhədi neon firuzəyi */
+    color: #5bc0be;                     /* Yazısı neon firuzəyi */
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;                  /* Yazının qalınlığı */
+    cursor: pointer;
+    transition: all 0.25s ease-in-out;  /* Keçidin hamar (animasiyalı) olması üçün */
 }
+
+/* ÜSTÜNƏ GƏLƏNDƏ (HOVER) İÇİNİN DOLMASI */
 .btn-blue:hover {
-    background-color: #1c2541;
+    background-color: #5bc0be;          /* İçi tam neon firuzəyi rənglə dolur */
+    color: #0b132b;                     /* Yazı tündləşir ki, parlaq fonda oxunsun */
     border-color: #5bc0be;
-    box-shadow: 0 0 8px rgba(91, 192, 190, 0.4);
+    box-shadow: 0 0 15px rgba(91, 192, 190, 0.6); /* Ətrafa zərif neon parıltı yayılır */
+}
+
+/* "YENİ+" DÜYMƏSİNİN NORMAL HALI */
+.btnNewInvoice, #btn-new-invoice {
+    background-color: #0b132b;          /* Normalda içi tünd */
+    border: 1px solid #10b981;          /* Sərhədi neon yaşıl */
+    color: #10b981;                     /* Yazısı neon yaşıl */
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.25s ease-in-out;  /* Hamar keçid animasiyası */
+}
+
+/* ÜSTÜNƏ GƏLƏNDƏ (HOVER) İÇİNİN YAŞILLA DOLMASI */
+.btnNewInvoice:hover, #btn-new-invoice:hover {
+    background-color: #10b981;          /* İçi tam neon yaşıl rənglə dolur */
+    color: #0b132b;                     /* Yazı tündləşir ki, yaşılın üzərində aydın oxunsun */
+    border-color: #10b981;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.6); /* Ətrafa zərif yaşıl neon parıltı yayılır */
 }
 
 /* 2. Gözləməyə Al Düyməsi (.btn-yellow) */
@@ -130,19 +161,29 @@ body {
 .invoice-table input.text-center { text-align: center; }
 .invoice-table input.text-right { text-align: right; }
 
+/* SƏTİR SİLMƏ (X) DÜYMƏSİNİN NORMAL HALI */
 .btn-delete-row {
-    background: rgba(239, 68, 68, 0.2);
-    border: 1px solid #ef4444;
-    color: #fca5a5;
-    font-size: 16px;
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
+    background-color: #0b132b;          /* Normalda içi tünd */
+    border: 1px solid #ef4444;          /* Sərhədi neon qırmızı */
+    color: #ef4444;                     /* X işarəsinin rəngi qırmızı */
+    width: 32px;                        /* Düymənin eni */
+    height: 32px;                       /* Düymənin hündürlüyü */
+    border-radius: 6px;                 /* Zərif künclər */
+    font-size: 18px;                    /* X işarəsinin ölçüsü */
+    font-weight: bold;
     cursor: pointer;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto;
+    transition: all 0.25s ease-in-out;  /* Hamar keçid animasiyası */
+}
+
+/* ÜSTÜNƏ GƏLƏNDƏ (HOVER) İÇİNİN QIRMIZI İLƏ DOLMASI VƏ YAZININ AĞ OLMASI */
+.btn-delete-row:hover {
+    background-color: #ef4444;          /* İçi tam qırmızı rənglə dolur */
+    color: #ffffff;                     /* Hover zamanı X işarəsi AĞ rəngdə olur */
+    border-color: #ef4444;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.6); /* Ətrafa qırmızı neon parıltı yayılır */
 }
 
 /* "Yeni Mal Əlavə Et" düyməsinin tam eni tutması üçün */
@@ -201,22 +242,23 @@ body {
 }
 
 .btn-refresh {
-    background: #0b132b;
-    border: 1px solid #3a506b;
-    color: #5bc0be;
-    padding: 6px 12px;
+    background-color: #0b132b;          /* Normalda içi tünd */
+    border: 1px solid #3a506b;          /* Sərhədi zərif göy-boz */
+    color: #5bc0be;                     /* Yazı rəngi neon firuzəyi */
+    padding: 6px 12px;                  /* Daxili boşluq */
     border-radius: 6px;
     cursor: pointer;
     font-size: 12px;
-    /* Rəng dəyişəndə yumşaq keçid olması üçün */
-    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    font-weight: 600;
+    transition: all 0.25s ease-in-out;  /* Hamar keçid animasiyası */
 }
 
-/* Üstünə gələndə (Arxiv düyməsindəki kimi aktivləşməsi üçün) */
+/* ÜSTÜNƏ GƏLƏNDƏ (HOVER) İÇİNİN FİRUZƏYİ İLƏ DOLMASI */
 .btn-refresh:hover {
-    background: #1c2541;
-    border-color: #5bc0be;
-    box-shadow: 0 0 8px rgba(91, 192, 190, 0.4);
+    background-color: #5bc0be;          /* İçi tam firuzəyi ilə dolur */
+    color: #0b132b;                     /* Yazı parlaq fonda oxunması üçün tündləşir */
+    border-color: #5bc0be;              /* Sərhəd firuzəyi olur */
+    box-shadow: 0 0 10px rgba(91, 192, 190, 0.5); /* Zərif firuzəyi neon parıltı */
 }
 
 .waiting-list { 
@@ -243,15 +285,24 @@ body {
     background: #121b36; 
 }
 
-.btn-delete-waiting { 
-    background: rgba(239, 68, 68, 0.15); 
-    border: 1px solid #ef4444; 
-    color: #fca5a5 !important; 
-    padding: 6px 12px; 
-    border-radius: 6px; 
-    cursor: pointer; 
-    font-size: 13px; 
+.btn-delete-waiting {
+    background-color: #0b132b;          /* Normalda içi tünd */
+    border: 1px solid #ef4444;          /* Sərhədi neon qırmızı */
+    color: #ef4444 !important;          /* Yazısı neon qırmızı */
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
     font-weight: bold;
+    transition: all 0.25s ease-in-out;  /* Hamar keçid animasiyası */
+}
+
+/* ÜSTÜNƏ GƏLƏNDƏ (HOVER) İÇİNİN QIRMIZI İLƏ DOLMASI VƏ YAZININ AĞ OLMASI */
+.btn-delete-waiting:hover {
+    background-color: #ef4444;          /* İçi tam qırmızı rənglə dolur */
+    color: #ffffff !important;          /* Hover zamanı yazı AĞ rəngdə olur */
+    border-color: #ef4444;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.6); /* Ətrafa qırmızı neon parıltı yayılır */
 }
 
 /* ── İKİ MƏRHƏLƏLİ SİLMƏ KUTUSU (BƏLİ / XEYR) ── */
@@ -499,44 +550,27 @@ body {
     width: 100% !important;
 }
 
-/* style.css faylının sonuna əlavə et */
 .btn-archive-nav {
-    background: #0b132b;
-    border: 1px solid #3a506b;
-    color: #a5b4fc;
-    padding: 6px 12px;
+    background-color: #0b132b;          /* Normalda içi tünd */
+    border: 1px solid #3a506b;          /* Sərhədi zərif göy-boz */
+    color: #a5b4fc;                     /* Yazı rəngi */
+    padding: 6px 12px;                  /* Kiçik ölçülü daxili boşluq */
     border-radius: 6px;
     cursor: pointer;
     font-size: 12px;
     font-weight: 600;
-    transition: background 0.2s, color 0.2s;
+    transition: all 0.25s ease-in-out;  /* Hamar keçid animasiyası */
 }
 
+/* ÜSTÜNƏ GƏLƏNDƏ (HOVER) İÇİNİN FİRUZƏYİ İLƏ DOLMASI */
 .btn-archive-nav:hover {
-    background: #3a506b;
-    color: #ffffff;
-    border-color: #5bc0be;
+    background-color: #5bc0be;          /* İçi tam firuzəyi ilə dolur */
+    color: #0b132b;                     /* Yazı parlaq fonda oxunması üçün tündləşir */
+    border-color: #5bc0be;              /* Sərhəd firuzəyi olur */
+    box-shadow: 0 0 10px rgba(91, 192, 190, 0.5); /* Zərif firuzəyi neon parıltı */
 }
 
-/* Filtrlə və Təmizlə Düymələrinin Stili */
-.arxiv-filters button {
-    padding: 8px 18px;
-    border-radius: 6px;
-    font-weight: 700;
-    cursor: pointer;
-    font-size: 13px;
-    transition: all 0.2s;
-}
 
-/* Filtrlə Düyməsi (Yaşıl/Mavi tón) */
-#btn-filter { /* HTML-də id-si nədirsə ona uyğunlaşdır (məsələn id="btn-filter") */
-    background-color: #10b981;
-    border: 1px solid #34d399;
-    color: #ffffff;
-}
-#btn-filter:hover {
-    background-color: #059669;
-}
 
 /* Təmizlə Düyməsi (Tünd/Boz ton) */
 #btn-clear { /* HTML-də id-si nədirsə ona uyğunlaşdır (məsələn id="btn-clear") */
@@ -567,34 +601,45 @@ body {
     100% { transform: rotate(360deg); } 
 }
 
-/* Arxiv səhifəsindəki Filtrlə və Təmizlə Düymələrinin Düzgün Stili */
+/* Arxiv səhifəsindəki Filtrlə və Təmizlə Düymələrinin Ortaq Stili */
 #btn-filter, #btn-clear {
+    background-color: #0b132b !important;  /* Normalda içi tünd */
     padding: 8px 18px !important;
     border-radius: 6px !important;
     font-weight: 700 !important;
     cursor: pointer !important;
     font-size: 13px !important;
-    transition: all 0.2s !important;
+    transition: all 0.25s ease-in-out !important; /* Hamar keçid */
 }
 
-/* Filtrlə Düyməsi (Yaşıl) */
+/* ==========================================================================
+   FİLTRLƏ DÜYMƏSİ (YAŞIL)
+   ========================================================================== */
 #btn-filter {
-    background-color: #10b981 !important;
-    border: 1px solid #34d399 !important;
-    color: #ffffff !important;
-}
-#btn-filter:hover {
-    background-color: #059669 !important;
+    border: 1px solid #10b981 !important;  /* Neon yaşıl sərhəd */
+    color: #10b981 !important;             /* Neon yaşıl yazı */
 }
 
-/* Təmizlə Düyməsi (Tünd/Mavi) */
-#btn-clear {
-    background-color: #3a506b !important;
-    border: 1px solid #5bc0be !important;
-    color: #ffffff !important;
+#btn-filter:hover {
+    background-color: #10b981 !important;  /* İçi yaşıl dolur */
+    color: #ffffff !important;             /* Hover zamanı yazı AĞ rəngdə olur */
+    border-color: #10b981 !important;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.6) !important; /* Neon parıltı */
 }
+
+/* ==========================================================================
+   TƏMİZLƏ DÜYMƏSİ (MAVİ / FİRUZƏYİ)
+   ========================================================================== */
+#btn-clear {
+    border: 1px solid #5bc0be !important;  /* Neon firuzəyi sərhəd */
+    color: #5bc0be !important;             /* Neon firuzəyi yazı */
+}
+
 #btn-clear:hover {
-    background-color: #1c2541 !important;
+    background-color: #5bc0be !important;  /* İçi firuzəyi dolur */
+    color: #ffffff !important;             /* Hover zamanı yazı AĞ rəngdə olur */
+    border-color: #5bc0be !important;
+    box-shadow: 0 0 12px rgba(91, 192, 190, 0.6) !important; /* Mavi neon parıltı */
 }
 
 /* Yüklənmə Animasiyası */

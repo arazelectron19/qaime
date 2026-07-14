@@ -10,17 +10,24 @@ body {
 }
 
 .nav-btn {
-    background: #3a506b;
-    color: white;
+    background-color: #1c2541;          /* Səhifə fonundan seçilməsi üçün bir az açıq tünd göy */
+    color: white;                       /* Normalda yazı ağ */
     padding: 10px 20px;
     border-radius: 8px;
     text-decoration: none;
     font-weight: bold;
-    border: 1px solid #5bc0be;
+    border: 1px solid #5bc0be;          /* Sərhədi neon firuzəyi */
     display: inline-block;
-    transition: all 0.2s;
+    transition: all 0.25s ease-in-out;  /* Hamar keçid */
 }
-.nav-btn:hover { background: #5bc0be; color: #0b132b; }
+
+/* ÜSTÜNƏ GƏLƏNDƏ (HOVER) İÇİNİN FİRUZƏYİ İLƏ DOLMASI VƏ YAZININ AĞ QALMASI */
+.nav-btn:hover { 
+    background-color: #5bc0be; 
+    color: white;                       /* Hover zamanı yazı AĞ rəngdə qalır */
+    border-color: #5bc0be;
+    box-shadow: 0 0 12px rgba(91, 192, 190, 0.6); /* Zərif firuzəyi neon parıltı */
+}
 
 .filter-panel {
     background: #1c2541;
@@ -45,23 +52,8 @@ body {
     outline: none;
 }
 
-#btn-filter { background: #10b981; color: white; border: 1px solid #34d399; padding: 9px 22px; border-radius: 8px; font-weight: 700; cursor: pointer; }
-#btn-clear { background: #3a506b; color: white; border: 1px solid #5bc0be; padding: 9px 22px; border-radius: 8px; font-weight: 700; cursor: pointer; }
 
-/* Yeni yüklə və çap et düymələrinin dizaynı */
-.btn-download {
-    background: #3a506b;
-    border: 1px solid #5bc0be;
-    color: #ffffff;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 12px;
-    margin-right: 8px;
-    transition: all 0.2s;
-}
-.btn-download:hover { background: #5bc0be; color: #0b132b; }
+
 
 .btn-print-row {
     background: #10b981;
@@ -76,7 +68,7 @@ body {
 }
 .btn-print-row:hover { background: #059669; }
 
-/* Loading animasiyası */
+/* Loading animasiyası */=
 .loading-wrapper { display: flex; justify-content: center; align-items: center; padding: 40px 0; width: 100%; }
 .sharp-ring-loader { 
     width: 36px; height: 36px; border-radius: 50%; 
@@ -116,15 +108,25 @@ body {
     white-space: nowrap;
 }
 
-/* 1. Yüklə (PDF) Düyməsi */
 .btn-download {
-    background: rgba(91, 192, 190, 0.1);
-    border: 1px solid #5bc0be;
-    color: #5bc0be;
+    background-color: #1c2541;          /* Arxa fonu bir az ağartdım (seçilməsi üçün) */
+    border: 1px solid #5bc0be;          /* Sərhədi neon firuzəyi */
+    color: #ffffff;                     /* Yazı rəngi ağ */
+    padding: 10px 20px;                 /* Ölçüləri tam rahat sıxılsın deyə bir az artırdım */
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    margin-right: 8px;
+    transition: all 0.25s ease-in-out;  /* Hamar animasiya */
 }
-.btn-download:hover {
-    background: #5bc0be;
-    color: #0b132b;
+
+/* ÜSTÜNƏ GƏLƏNDƏ (HOVER) İÇİNİN TAM FİRUZƏYİ OLMASI VƏ YAZININ AĞ QALMASI */
+.btn-download:hover { 
+    background-color: #5bc0be; 
+    color: #ffffff;                     /* Yazı ağ qalır */
+    border-color: #5bc0be;
+    box-shadow: 0 0 12px rgba(91, 192, 190, 0.6); /* Zərif neon parıltı */
 }
 
 /* 2. Çap Et Düyməsi */
@@ -326,4 +328,98 @@ body {
     border: solid white;
     border-width: 0 2.5px 2.5px 0;
     transform: rotate(45deg);
+}
+
+/* Müştəri adı xanasının strukturu */
+.customer-name-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Redaktə qələm düyməsi */
+.btn-edit-name {
+    background: #1e293b;
+    border: 1px solid #334155;
+    font-size: 12px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Düymənin üzərinə gələndə (Hover effekti) */
+.btn-edit-name:hover {
+    background: #0f172a;
+    border-color: #5bc0be;
+    transform: scale(1.05);
+    box-shadow: 0 0 8px rgba(91, 192, 190, 0.2);
+}
+
+/* Aktiv redaktə inputu */
+.edit-name-input {
+    background: #0f172a;
+    border: 1px solid #5bc0be;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 700;
+    outline: none;
+    width: 140px;
+    box-shadow: 0 0 6px rgba(91, 192, 190, 0.3);
+}
+
+/* "HAMISINI SEÇ" DÜYMƏSİNİN NORMAL HALI */
+#btn-select-all-dynamic {
+    background-color: #1c2541;          /* Səhifə fonundan seçilməsi üçün açıq tünd göy */
+    border: 1px solid #5bc0be;          /* Sərhədi neon firuzəyi */
+    color: #ffffff !important;          /* Yazısı ağ rəngdə */
+    padding: 6px 0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    width: 120px;
+    text-align: center;
+    box-sizing: border-box;
+    transition: all 0.25s ease-in-out;  /* Keçid animasiyası */
+}
+
+/* ÜSTÜNƏ GƏLƏNDƏ (HOVER) İÇİNİN DOLMASI VƏ YAZININ AĞ QALMASI */
+#btn-select-all-dynamic:hover {
+    background-color: #5bc0be;          /* İçi tam firuzəyi dolur */
+    color: #ffffff !important;          /* Yazı tam ağ rəngdə qalır */
+    border-color: #5bc0be;
+    box-shadow: 0 0 10px rgba(91, 192, 190, 0.6); /* Firuzəyi neon parıltı */
+}
+
+/* "SİL" (TOPLU SİLMƏ) DÜYMƏSİNİN NORMAL HALI */
+#btn-bulk-delete {
+    background-color: #3b141a;          /* Seçilməsi üçün bir az açıq tünd qırmızı fon */
+    border: 1px solid #ef4444;          /* Sərhədi neon qırmızı */
+    color: #ef4444 !important;          /* Yazı rəngi neon qırmızı */
+    padding: 6px 0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 13px;
+    width: 80px;
+    text-align: center;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    transition: all 0.25s ease-in-out;  /* Hamar keçid animasiyası */
+}
+
+/* ÜSTÜNƏ GƏLƏNDƏ (HOVER) İÇİNİN TAM QIRMIZI OLMASI VƏ YAZININ AĞ QALMASI */
+#btn-bulk-delete:hover {
+    background-color: #ef4444;          /* İçi tam qırmızı rənglə dolur */
+    color: #ffffff !important;          /* Yazı tam ağ rəngdə qalır */
+    border-color: #ef4444;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.6); /* Qırmızı neon parıltı */
 }

@@ -2,7 +2,8 @@
 <html lang="az">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=1200, initial-scale=0.3, shrink-to-fit=no">
+    <link rel="manifest" href="manifest.json">
     <title>Araz Electron - Satış Qaiməsi</title>
     <link rel="stylesheet" href="style.css">
     <!-- html2pdf Kitabxanası -->
@@ -17,9 +18,10 @@
         <div class="control-panel">
             <input type="text" id="customer-input" placeholder="Usta və ya Müştəri adı daxil edin...">
             <div class="actions">
+                <button class="btnNewInvoice" id="btn-new-invoice">Yeni+</button>
                 <button class="btn btn-blue" id="btn-print">Çap Et</button>
                 <button class="btn btn-yellow" id="btn-waiting">Gözləməyə Al</button>
-                <button class="btn btn-green" id="btn-download">YÜKLƏ (PDF)</button>
+                <button class="btn btn-green" id="btn-download">YÜKLƏ</button>
             </div>
         </div>
 

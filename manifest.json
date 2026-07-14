@@ -1,0 +1,21 @@
+{
+  "short_name": "Qaimə Portal",
+  "name": "Araz Electron - Satış Qaimə Portalı",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "favicon.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/index.html",
+  "background_color": "#0b132b",
+  "theme_color": "#1c2541",
+  "display": "standalone",
+  "orientation": "landscape"
+}

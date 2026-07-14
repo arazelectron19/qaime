@@ -1,6 +1,55 @@
 import { db, collection, getDocs, query, orderBy } from "../firbase.js";
 // Firebase-dən silmə funksiyalarını birbaşa rəsmi CDN-dən çəkirik
-import { deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+// ==========================================
+// YAŞIL VƏ QIRMIZI BİLDİRİŞ FUNKSİYASI
+// ==========================================
+function showNotification(message, type = 'success') {
+    const oldNotification = document.getElementById('custom-notification');
+    if (oldNotification) oldNotification.remove();
+
+    const notification = document.createElement('div');
+    notification.id = 'custom-notification';
+    notification.innerText = message;
+
+    Object.assign(notification.style, {
+        position: 'fixed',
+        top: '20px',
+        right: '20px',
+        padding: '12px 24px',
+        borderRadius: '6px',
+        color: '#ffffff',
+        fontWeight: 'bold',
+        fontSize: '14px',
+        zIndex: '10000',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+        transition: 'all 0.3s ease',
+        opacity: '0',
+        transform: 'translateY(-20px)'
+    });
+
+    if (type === 'success') {
+        notification.style.backgroundColor = '#10b981'; // Yaşıl
+        notification.style.borderLeft = '5px solid #047857';
+    } else {
+        notification.style.backgroundColor = '#ef4444'; // Qırmızı
+        notification.style.borderLeft = '5px solid #b91c1c';
+    }
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateY(0)';
+    }, 10);
+
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateY(-20px)';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
 
 const archiveTbody = document.getElementById('archive-tbody');
 const btnFilter = document.getElementById('btn-filter');
@@ -41,7 +90,7 @@ function initSearchInput() {
     searchInput = document.createElement('input');
     searchInput.type = 'text';
     searchInput.id = 'archive-search-input';
-    searchInput.placeholder = 'Müştəri adı...';
+    searchInput.placeholder = 'Müştəri axtar';
     
     searchInput.style.cssText = `
         background: #0f172a;
@@ -140,7 +189,12 @@ function renderArchiveTable(dataArray) {
                 </label>
                 <span class="date-text">${dateStr}</span>
             </td>
-            <td style="font-weight: 700;">${data.customerName || 'Naməlum Müştəri'}</td>
+           <td style="font-weight: 700;">
+    <div class="customer-name-cell">
+        <span class="customer-name">${data.customerName || 'Naməlum Müştəri'}</span>
+        <button class="btn-edit-name" onclick="editCustomerName(this, '${data.id}')">✏️</button>
+    </div>
+</td>
             <td style="text-align: right; font-weight: bold; color: #5bc0be;">${Number(data.totalAmount || 0).toFixed(2)} AZN</td>
             <td style="text-align: center; position: relative;">
                 <div class="action-cell-buttons">
@@ -177,11 +231,13 @@ function renderArchiveTable(dataArray) {
                     tr.remove();
                     allInvoices = allInvoices.filter(inv => inv.id !== data.id);
                     
+                    showNotification("Qaimə arxivdən silindi!", "success");
+
                     if(allInvoices.length === 0) {
                         archiveTbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#9ca3af; padding: 25px;">Arxivdə heç bir sənəd tapılmadı.</td></tr>';
                     }
                 } catch (err) {
-                    alert("Silərkən xəta baş verdi!");
+                    showNotification("Silərkən xəta baş verdi!", "error");
                     console.error(err);
                 }
             });
@@ -241,25 +297,20 @@ function initDeleteTrigger() {
     btnSelectAll = document.createElement('button');
     btnSelectAll.id = 'btn-select-all-dynamic';
     btnSelectAll.textContent = 'Hamısını Seç';
-    
-    // Düymənin enini 120px edirik, daxili boşluğunu yığırıq və fontunu 12px edirik ki mətnlər yerləşsin
-    btnSelectAll.style.cssText = "background-color: #0f2d2a; color: #5bc0be; border: 1px solid #5bc0be; padding: 6px 0; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; display: none; transition: background 0.2s; white-space: nowrap; flex-shrink: 0; width: 120px; text-align: center; box-sizing: border-box;";
-    
-    const bulkActionWrapper = document.createElement('div');
+
+    // Sətirbərəst bütün dizaynı sildik, sadəcə başlanğıcda gizli qalması hissəsini saxlayırıq
+    btnSelectAll.style.display = 'none';    const bulkActionWrapper = document.createElement('div');
     bulkActionWrapper.id = 'bulk-action-wrapper';
     bulkActionWrapper.style.cssText = "display: none; vertical-align: middle; flex-shrink: 0;";
 
-    btnBulkDelete = document.createElement('button');
-    btnBulkDelete.id = 'btn-bulk-delete';
-    btnBulkDelete.textContent = 'Sil';
-    // Sil düyməsinin enini 80px-ə endiririk
-    btnBulkDelete.style.cssText = "background-color: #3b141a; color: #ef4444; border: 1px solid #ef4444; padding: 6px 0; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; transition: background 0.2s; width: 80px; text-align: center; flex-shrink: 0; box-sizing: border-box;";
+   btnBulkDelete = document.createElement('button');
+   btnBulkDelete.id = 'btn-bulk-delete';
+   btnBulkDelete.textContent = 'Sil';
 
-    bulkActionWrapper.appendChild(btnBulkDelete);
-    filterBtnContainer.appendChild(btnSelectAll);
-    filterBtnContainer.appendChild(bulkActionWrapper);
+   bulkActionWrapper.appendChild(btnBulkDelete);
+   filterBtnContainer.appendChild(btnSelectAll);
+   filterBtnContainer.appendChild(bulkActionWrapper);
 
-    // HƏR BİR CHECKBOX DƏYİŞƏNDƏ "HAMISINI SEÇ" DÜYMƏSİNİN MƏTNİNİ YENİLƏYƏN FUNKSİYA
     function updateSelectAllButtonText() {
         const checkboxes = document.querySelectorAll('.archive-select-checkbox');
         if (checkboxes.length === 0) return;
@@ -284,7 +335,6 @@ function initDeleteTrigger() {
             btnSelectAll.style.display = 'inline-block';
             bulkActionWrapper.style.display = 'inline-flex';
 
-            // Checkboxlara tək-tək kliklənmə hadisəsini dinləyirik
             checkboxes.forEach(cb => {
                 cb.removeEventListener('change', updateSelectAllButtonText);
                 cb.addEventListener('change', updateSelectAllButtonText);
@@ -326,14 +376,13 @@ function initDeleteTrigger() {
         const checkedBoxes = document.querySelectorAll('.archive-select-checkbox:checked');
         
         if (checkedBoxes.length === 0) {
-            alert("Zəhmət olmasa silmək istədiyiniz qaimələri sol tərəfdən işarələyin!");
-            return;
+            // alert əvəzinə qırmızı xəbərdarlıq bildirişi
+            return showNotification("Zəhmət olmasa silmək istədiyiniz qaimələri sol tərəfdən işarələyin!", "error");
         }
 
         btnBulkDelete.style.display = 'none';
 
         const confirmContainer = document.createElement('div');
-        // Təsdiq panelinin enini düymə ilə eyni (80px) saxlayırıq
         confirmContainer.style.cssText = "display: flex; align-items: center; justify-content: center; gap: 4px; background: #1e1b29; border: 1px solid #ef4444; padding: 4px; border-radius: 6px; width: 80px; box-sizing: border-box; flex-shrink: 0;";
         confirmContainer.innerHTML = `
             <button class="btn-bulk-yes" style="background: #ef4444; color: #fff; border: none; padding: 4px 0; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; flex: 1; text-align: center; white-space: nowrap;">Bəli</button>
@@ -344,6 +393,7 @@ function initDeleteTrigger() {
             const currentChecked = document.querySelectorAll('.archive-select-checkbox:checked');
             if (currentChecked.length === 0) return;
 
+            const totalToDelete = currentChecked.length;
             confirmContainer.innerHTML = `<span style="color: #ef4444; font-size: 11px; font-weight: bold; white-space: nowrap;">...</span>`;
 
             const deletePromises = Array.from(currentChecked).map(async (cb) => {
@@ -369,11 +419,13 @@ function initDeleteTrigger() {
                 const wrappers = document.querySelectorAll('.custom-checkbox-wrapper');
                 wrappers.forEach(wrap => wrap.style.display = 'none');
 
+                showNotification(`${totalToDelete} ədəd qaimə uğurla silindi!`, "success");
+
                 if (allInvoices.length === 0) {
                     archiveTbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#9ca3af; padding: 25px;">Arxivdə heç bir sənəd tapılmadı.</td></tr>';
                 }
             }).catch(err => {
-                alert("Silmə zamanı xəta!");
+                showNotification("Toplu silmə zamanı xəta yarandı!", "error");
                 console.error(err);
                 resetBulkDeleteButton();
             });
@@ -479,7 +531,6 @@ function printInvoice(data, dateStr) {
     printContainer.remove();
 }
 
-// "FİLTRLƏ" DÜYMƏSİNƏ KLİKLƏYƏNDƏ TARİXİ AKTİV EDİR
 btnFilter.addEventListener('click', () => {
     applyAllFilters();
 });
@@ -518,3 +569,85 @@ btnClear.addEventListener('click', () => {
     
     renderArchiveTable(allInvoices);
 });
+
+window.editCustomerName = function(button, docId) {
+    const cell = button.parentElement;
+    const nameSpan = cell.querySelector('.customer-name');
+    const currentName = nameSpan.innerText;
+
+    if (cell.querySelector('.edit-name-input')) return;
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = currentName;
+    input.className = 'edit-name-input';
+
+    nameSpan.style.display = 'none';
+    button.style.display = 'none';
+    cell.appendChild(input);
+    input.focus();
+
+    async function saveName() {
+        const newName = input.value.trim();
+
+        if (newName && newName !== currentName) {
+            nameSpan.innerText = newName;
+
+            try {
+                await updateDoc(doc(db, "history_invoices", docId), { customerName: newName })
+                .catch(async () => {
+                    await updateDoc(doc(db, "invoices", docId), { customerName: newName });
+                });
+
+                allInvoices = allInvoices.map(inv => {
+                    if (inv.id === docId) {
+                        return { ...inv, customerName: newName };
+                    }
+                    return inv;
+                });
+                
+                const tr = document.querySelector(`tr[data-id="${docId}"]`);
+                if (tr) {
+                    const updatedData = allInvoices.find(inv => inv.id === docId);
+                    const dateText = tr.querySelector('.date-text')?.innerText || "---";
+
+                    const btnDownload = tr.querySelector('.btn-download');
+                    const btnPrint = tr.querySelector('.btn-print-row');
+
+                    if (btnDownload && btnPrint && updatedData) {
+                        const newBtnDownload = btnDownload.cloneNode(true);
+                        const newBtnPrint = btnPrint.cloneNode(true);
+
+                        btnDownload.parentNode.replaceChild(newBtnDownload, btnDownload);
+                        btnPrint.parentNode.replaceChild(newBtnPrint, btnPrint);
+
+                        newBtnDownload.addEventListener('click', () => { exportToPDF(updatedData, dateText); });
+                        newBtnPrint.addEventListener('click', () => { printInvoice(updatedData, dateText); });
+                    }
+                }
+
+                showNotification("Müştəri adı uğurla yeniləndi!", "success");
+            } catch (err) {
+                showNotification("Adı yeniləyərkən xəta baş verdi!", "error");
+                console.error(err);
+                nameSpan.innerText = currentName;
+            }
+        } else {
+            nameSpan.innerText = currentName;
+        }
+
+        nameSpan.style.display = 'inline';
+        button.style.display = 'inline';
+        input.remove();
+    }
+
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            saveName();
+        }
+    });
+
+    input.addEventListener('blur', () => {
+        saveName();
+    });
+}
