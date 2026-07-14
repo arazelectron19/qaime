@@ -1,7 +1,8 @@
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js')
-        .then(() => console.log("Service Worker aktivdir"))
-        .catch(err => console.log("SW xətası:", err));
+    // GitHub Pages alt qovluğunu (qaime) birbaşa bura qeyd edirik
+    navigator.serviceWorker.register('/qaime/sw.js', { scope: '/qaime/' })
+        .then((reg) => console.log("Service Worker uğurla qeydiyyatdan keçdi! Sahə:", reg.scope))
+        .catch(err => console.error("Service Worker qeydiyyat xətası:", err));
 }
 
 import { 
