@@ -663,7 +663,6 @@ body {
     100% { transform: rotate(360deg); } 
 }
 
-///////////////////////////
 
 /* Mobil telefonlar üçün uyğunlaşdırma (Ekran 768px-dən kiçik olduqda) */
 @media (max-width: 768px) {
