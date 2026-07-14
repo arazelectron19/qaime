@@ -1,4 +1,6 @@
+// Əgər linkin sonunda index.html varsa, onu təhlükəsiz şəkildə silirik
 if (window.location.pathname.endsWith('index.html')) {
-    const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname.replace('index.html', '');
+    // Qovluq adını qorumaq üçün yalnız index.html hissəsini təmizləyirik
+    const cleanUrl = window.location.pathname.replace('index.html', '');
     window.history.replaceState({}, document.title, cleanUrl);
 }
