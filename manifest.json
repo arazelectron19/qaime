@@ -13,9 +13,7 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": "/index.html",
-  "background_color": "#0b132b",
-  "theme_color": "#1c2541",
-  "display": "standalone",
-  "orientation": "landscape"
+  "scope": "/qaime/",
+  "start_url": "/qaime/index.html",
+  "display": "standalone"
 }
